@@ -1,0 +1,1387 @@
+---
+title: "Comands"
+---
+
+---
+
+title: 'Commands & Permissions'
+
+description: 'Complete reference for all ServerManagerPro commands and their required permissions'
+
+icon: 'terminal'
+
+---
+
+## Overview
+
+ServerManagerPro provides a comprehensive set of commands for server administration, moderation, and player management. All commands support cross-server execution in a networked environment.
+
+\<Note\>
+
+  All permissions support wildcards. For example, `servermanager.admin.*` grants all admin permissions.
+
+  The special permissions `OP` and `*` grant full access to all commands.
+
+\</Note\>
+
+## Admin Commands
+
+Commands for server administrators to manage the server, groups, and network.
+
+\<AccordionGroup\>
+
+  \<Accordion title="/sm - Server Manager" icon="gear"\>
+
+    Base command for all ServerManagerPro administration.
+
+    
+
+    \`\`\`bash
+
+    /sm
+
+    \`\`\`
+
+    
+
+    Shows a list of all available subcommands.
+
+  \</Accordion\>
+
+  \<Accordion title="/sm reload" icon="rotate"\>
+
+    Reload all configuration files.
+
+    
+
+    \`\`\`bash
+
+    /sm reload
+
+    \`\`\`
+
+    
+
+    \<ParamField path="permission" type="string" required\>
+
+      `servermanager.admin.reload`
+
+    \</ParamField\>
+
+  \</Accordion\>
+
+  \<Accordion title="/sm bypass" icon="shield-halved"\>
+
+    Toggle world protection bypass for yourself.
+
+    
+
+    \`\`\`bash
+
+    /sm bypass
+
+    \`\`\`
+
+    
+
+    \<ParamField path="permission" type="string" required\>
+
+      `servermanager.admin.bypass`
+
+    \</ParamField\>
+
+  \</Accordion\>
+
+  \<Accordion title="/sm groups" icon="users"\>
+
+    List all configured groups.
+
+    
+
+    \`\`\`bash
+
+    /sm groups
+
+    \`\`\`
+
+    
+
+    \<ParamField path="permission" type="string" required\>
+
+      `servermanager.admin.groups`
+
+    \</ParamField\>
+
+  \</Accordion\>
+
+  \<Accordion title="/sm group" icon="user-tag"\>
+
+    View or manage player groups.
+
+    
+
+    \`\`\`bash
+
+    /sm group \<player\>
+
+    /sm group set \<player\> \<group\>
+
+    /sm group add \<player\> \<group\> \<duration\> [callback]
+
+    \`\`\`
+
+    
+
+    \<ParamField path="player" type="string" required\>
+
+      The player name
+
+    \</ParamField\>
+
+    
+
+    \<ParamField path="group" type="string"\>
+
+      The group name to assign
+
+    \</ParamField\>
+
+    
+
+    \<ParamField path="duration" type="string"\>
+
+      Duration for timed groups (e.g., `30d`, `1w`, `2h`, `30m`)
+
+    \</ParamField\>
+
+    
+
+    \<ParamField path="callback" type="string"\>
+
+      Optional command to execute when the group expires
+
+    \</ParamField\>
+
+    
+
+    \<ParamField path="permission" type="string" required\>
+
+      `servermanager.admin.group`
+
+    \</ParamField\>
+
+  \</Accordion\>
+
+  \<Accordion title="/sm player" icon="user"\>
+
+    View detailed player information.
+
+    
+
+    \`\`\`bash
+
+    /sm player \<name\>
+
+    \`\`\`
+
+    
+
+    \<ParamField path="name" type="string" required\>
+
+      The player name to look up
+
+    \</ParamField\>
+
+    
+
+    \<ParamField path="permission" type="string" required\>
+
+      `servermanager.admin.player`
+
+    \</ParamField\>
+
+  \</Accordion\>
+
+  \<Accordion title="/sm worlds" icon="globe"\>
+
+    List all protected worlds and their settings.
+
+    
+
+    \`\`\`bash
+
+    /sm worlds
+
+    \`\`\`
+
+    
+
+    \<ParamField path="permission" type="string" required\>
+
+      `servermanager.admin.worlds`
+
+    \</ParamField\>
+
+  \</Accordion\>
+
+  \<Accordion title="/sm stats" icon="chart-bar"\>
+
+    View server statistics.
+
+    
+
+    \`\`\`bash
+
+    /sm stats
+
+    \`\`\`
+
+    
+
+    \<ParamField path="permission" type="string" required\>
+
+      `servermanager.admin.stats`
+
+    \</ParamField\>
+
+  \</Accordion\>
+
+  \<Accordion title="/sm servers" icon="server"\>
+
+    List all configured network servers.
+
+    
+
+    \`\`\`bash
+
+    /sm servers
+
+    \`\`\`
+
+    
+
+    \<ParamField path="permission" type="string" required\>
+
+      `servermanager.admin.servers`
+
+    \</ParamField\>
+
+  \</Accordion\>
+
+  \<Accordion title="/sm network" icon="network-wired"\>
+
+    View network status and connected servers.
+
+    
+
+    \`\`\`bash
+
+    /sm network
+
+    \`\`\`
+
+    
+
+    \<ParamField path="permission" type="string" required\>
+
+      `servermanager.admin.network`
+
+    \</ParamField\>
+
+  \</Accordion\>
+
+  \<Accordion title="/sm genauth" icon="key"\>
+
+    Generate authentication file for a slave server.
+
+    
+
+    \`\`\`bash
+
+    /sm genauth \<server\>
+
+    \`\`\`
+
+    
+
+    \<ParamField path="server" type="string" required\>
+
+      The server ID to generate auth for
+
+    \</ParamField\>
+
+    
+
+    \<ParamField path="permission" type="string" required\>
+
+      `servermanager.admin.genauth`
+
+    \</ParamField\>
+
+  \</Accordion\>
+
+  \<Accordion title="/sm conflicts" icon="triangle-exclamation"\>
+
+    View inventory conflict log.
+
+    
+
+    \`\`\`bash
+
+    /sm conflicts [page|id]
+
+    \`\`\`
+
+    
+
+    \<ParamField path="page|id" type="string"\>
+
+      Page number or specific conflict ID
+
+    \</ParamField\>
+
+    
+
+    \<ParamField path="permission" type="string" required\>
+
+      `servermanager.admin.conflicts`
+
+    \</ParamField\>
+
+  \</Accordion\>
+
+  \<Accordion title="/sm profiles" icon="id-card"\>
+
+    View protection profiles.
+
+    
+
+    \`\`\`bash
+
+    /sm profiles
+
+    \`\`\`
+
+    
+
+    \<ParamField path="permission" type="string" required\>
+
+      `servermanager.admin.profiles`
+
+    \</ParamField\>
+
+  \</Accordion\>
+
+  \<Accordion title="/sm tp" icon="location-arrow"\>
+
+    Teleport a player to another player (cross-server supported).
+
+    
+
+    \`\`\`bash
+
+    /sm tp \<player\> \<target\>
+
+    \`\`\`
+
+    
+
+    \<ParamField path="player" type="string" required\>
+
+      The player to teleport
+
+    \</ParamField\>
+
+    
+
+    \<ParamField path="target" type="string" required\>
+
+      The target player to teleport to
+
+    \</ParamField\>
+
+    
+
+    \<ParamField path="permission" type="string" required\>
+
+      `servermanager.admin.tp`
+
+    \</ParamField\>
+
+    
+
+    \<Info\>
+
+      This command works across servers. If the players are on different servers, 
+
+      the player will be transferred to the target's server automatically.
+
+    \</Info\>
+
+  \</Accordion\>
+
+\</AccordionGroup\>
+
+## Standalone Admin Commands
+
+\<AccordionGroup\>
+
+  \<Accordion title="/broadcast" icon="bullhorn"\>
+
+    Broadcast a message to all servers.
+
+    
+
+    \`\`\`bash
+
+    /broadcast \<message\>
+
+    /bc \<message\>
+
+    /alert \<message\>
+
+    \`\`\`
+
+    
+
+    \<ParamField path="message" type="string" required\>
+
+      The message to broadcast
+
+    \</ParamField\>
+
+    
+
+    \<ParamField path="permission" type="string" required\>
+
+      `servermanager.admin.broadcast`
+
+    \</ParamField\>
+
+  \</Accordion\>
+
+  \<Accordion title="/maintenance" icon="wrench"\>
+
+    Toggle maintenance mode.
+
+    
+
+    \`\`\`bash
+
+    /maintenance [on|off] [message]
+
+    \`\`\`
+
+    
+
+    \<ParamField path="on|off" type="string"\>
+
+      Enable or disable maintenance mode
+
+    \</ParamField\>
+
+    
+
+    \<ParamField path="message" type="string"\>
+
+      Custom maintenance message
+
+    \</ParamField\>
+
+    
+
+    \<ParamField path="permission" type="string" required\>
+
+      `servermanager.admin.maintenance`
+
+    \</ParamField\>
+
+  \</Accordion\>
+
+  \<Accordion title="/send" icon="paper-plane"\>
+
+    Send a player to another server.
+
+    
+
+    \`\`\`bash
+
+    /send \<player\> \<server\>
+
+    \`\`\`
+
+    
+
+    \<ParamField path="player" type="string" required\>
+
+      The player to send
+
+    \</ParamField\>
+
+    
+
+    \<ParamField path="server" type="string" required\>
+
+      The target server name
+
+    \</ParamField\>
+
+    
+
+    \<ParamField path="permission" type="string" required\>
+
+      `servermanager.admin.send`
+
+    \</ParamField\>
+
+  \</Accordion\>
+
+  \<Accordion title="/find" icon="magnifying-glass"\>
+
+    Find which server a player is on.
+
+    
+
+    \`\`\`bash
+
+    /find \<player\>
+
+    \`\`\`
+
+    
+
+    \<ParamField path="player" type="string" required\>
+
+      The player to find
+
+    \</ParamField\>
+
+    
+
+    \<ParamField path="permission" type="string" required\>
+
+      `servermanager.admin.find` or `servermanager.staff.find`
+
+    \</ParamField\>
+
+  \</Accordion\>
+
+\</AccordionGroup\>
+
+## Moderation Commands
+
+Commands for moderators to manage player behavior.
+
+\<AccordionGroup\>
+
+  \<Accordion title="/ban" icon="gavel"\>
+
+    Ban a player from the server.
+
+    
+
+    \`\`\`bash
+
+    /ban \<player\> [duration] [reason]
+
+    /ban \<player\> -s [duration] [reason]
+
+    \`\`\`
+
+    
+
+    \<ParamField path="player" type="string" required\>
+
+      The player to ban
+
+    \</ParamField\>
+
+    
+
+    \<ParamField path="duration" type="string" default="perm"\>
+
+      Ban duration (e.g., `1d`, `7d`, `30d`, `perm`)
+
+    \</ParamField\>
+
+    
+
+    \<ParamField path="reason" type="string" default="No reason specified"\>
+
+      The ban reason
+
+    \</ParamField\>
+
+    
+
+    \<ParamField path="-s" type="flag"\>
+
+      Silent flag - don't announce the ban
+
+    \</ParamField\>
+
+    
+
+    \<ParamField path="permission" type="string" required\>
+
+      `servermanager.mod.ban`
+
+    \</ParamField\>
+
+  \</Accordion\>
+
+  \<Accordion title="/unban" icon="unlock"\>
+
+    Unban a player.
+
+    
+
+    \`\`\`bash
+
+    /unban \<player\>
+
+    \`\`\`
+
+    
+
+    \<ParamField path="player" type="string" required\>
+
+      The player to unban
+
+    \</ParamField\>
+
+    
+
+    \<ParamField path="permission" type="string" required\>
+
+      `servermanager.mod.unban`
+
+    \</ParamField\>
+
+  \</Accordion\>
+
+  \<Accordion title="/kick" icon="door-open"\>
+
+    Kick a player from the server.
+
+    
+
+    \`\`\`bash
+
+    /kick \<player\> [reason]
+
+    \`\`\`
+
+    
+
+    \<ParamField path="player" type="string" required\>
+
+      The player to kick
+
+    \</ParamField\>
+
+    
+
+    \<ParamField path="reason" type="string" default="Kicked by admin"\>
+
+      The kick reason
+
+    \</ParamField\>
+
+    
+
+    \<ParamField path="permission" type="string" required\>
+
+      `servermanager.mod.kick`
+
+    \</ParamField\>
+
+  \</Accordion\>
+
+  \<Accordion title="/mute" icon="volume-xmark"\>
+
+    Mute a player.
+
+    
+
+    \`\`\`bash
+
+    /mute \<player\> [duration] [reason]
+
+    \`\`\`
+
+    
+
+    \<ParamField path="player" type="string" required\>
+
+      The player to mute
+
+    \</ParamField\>
+
+    
+
+    \<ParamField path="duration" type="string" default="perm"\>
+
+      Mute duration
+
+    \</ParamField\>
+
+    
+
+    \<ParamField path="reason" type="string"\>
+
+      The mute reason
+
+    \</ParamField\>
+
+    
+
+    \<ParamField path="permission" type="string" required\>
+
+      `servermanager.mod.mute`
+
+    \</ParamField\>
+
+  \</Accordion\>
+
+  \<Accordion title="/unmute" icon="volume-high"\>
+
+    Unmute a player.
+
+    
+
+    \`\`\`bash
+
+    /unmute \<player\>
+
+    \`\`\`
+
+    
+
+    \<ParamField path="player" type="string" required\>
+
+      The player to unmute
+
+    \</ParamField\>
+
+    
+
+    \<ParamField path="permission" type="string" required\>
+
+      `servermanager.mod.unmute`
+
+    \</ParamField\>
+
+  \</Accordion\>
+
+  \<Accordion title="/history" icon="clock-rotate-left"\>
+
+    View a player's punishment history.
+
+    
+
+    \`\`\`bash
+
+    /history \<player\> [page]
+
+    \`\`\`
+
+    
+
+    \<ParamField path="player" type="string" required\>
+
+      The player to check
+
+    \</ParamField\>
+
+    
+
+    \<ParamField path="page" type="number" default="1"\>
+
+      Page number
+
+    \</ParamField\>
+
+    
+
+    \<ParamField path="permission" type="string" required\>
+
+      `servermanager.mod.history`
+
+    \</ParamField\>
+
+  \</Accordion\>
+
+  \<Accordion title="/check" icon="clipboard-check"\>
+
+    Check a player's current status.
+
+    
+
+    \`\`\`bash
+
+    /check \<player\>
+
+    \`\`\`
+
+    
+
+    \<ParamField path="player" type="string" required\>
+
+      The player to check
+
+    \</ParamField\>
+
+    
+
+    \<ParamField path="permission" type="string" required\>
+
+      `servermanager.mod.check`
+
+    \</ParamField\>
+
+  \</Accordion\>
+
+  \<Accordion title="/alts" icon="users-rectangle"\>
+
+    Check a player's alt accounts.
+
+    
+
+    \`\`\`bash
+
+    /alts \<player\>
+
+    \`\`\`
+
+    
+
+    \<ParamField path="player" type="string" required\>
+
+      The player to check
+
+    \</ParamField\>
+
+    
+
+    \<ParamField path="permission" type="string" required\>
+
+      `servermanager.mod.alts`
+
+    \</ParamField\>
+
+  \</Accordion\>
+
+\</AccordionGroup\>
+
+## Staff Commands
+
+Commands for staff members.
+
+\<AccordionGroup\>
+
+  \<Accordion title="/staffchat" icon="comments"\>
+
+    Send messages to staff chat or toggle staff chat mode.
+
+    
+
+    \`\`\`bash
+
+    /staffchat [message]
+
+    /sc [message]
+
+    \`\`\`
+
+    
+
+    \<ParamField path="message" type="string"\>
+
+      Message to send. If empty, toggles staff chat mode.
+
+    \</ParamField\>
+
+    
+
+    \<ParamField path="permission" type="string" required\>
+
+      `servermanager.staff.chat`
+
+    \</ParamField\>
+
+    
+
+    \<Info\>
+
+      Staff chat messages are visible across all connected servers.
+
+    \</Info\>
+
+  \</Accordion\>
+
+\</AccordionGroup\>
+
+## Region Commands
+
+Commands for managing protected regions.
+
+\<AccordionGroup\>
+
+  \<Accordion title="/region create" icon="plus"\>
+
+    Create a new protected region.
+
+    
+
+    \`\`\`bash
+
+    /region create \<name\>
+
+    \`\`\`
+
+    
+
+    \<ParamField path="name" type="string" required\>
+
+      The region name
+
+    \</ParamField\>
+
+    
+
+    \<ParamField path="permission" type="string" required\>
+
+      `servermanager.region.create`
+
+    \</ParamField\>
+
+  \</Accordion\>
+
+  \<Accordion title="/region delete" icon="trash"\>
+
+    Delete a region.
+
+    
+
+    \`\`\`bash
+
+    /region delete \<name\>
+
+    \`\`\`
+
+    
+
+    \<ParamField path="name" type="string" required\>
+
+      The region name
+
+    \</ParamField\>
+
+    
+
+    \<ParamField path="permission" type="string" required\>
+
+      `servermanager.region.delete`
+
+    \</ParamField\>
+
+  \</Accordion\>
+
+  \<Accordion title="/region list" icon="list"\>
+
+    List all regions.
+
+    
+
+    \`\`\`bash
+
+    /region list
+
+    \`\`\`
+
+    
+
+    \<ParamField path="permission" type="string" required\>
+
+      `servermanager.region.list`
+
+    \</ParamField\>
+
+  \</Accordion\>
+
+  \<Accordion title="/region info" icon="circle-info"\>
+
+    View region information.
+
+    
+
+    \`\`\`bash
+
+    /region info \<name\>
+
+    \`\`\`
+
+    
+
+    \<ParamField path="name" type="string" required\>
+
+      The region name
+
+    \</ParamField\>
+
+    
+
+    \<ParamField path="permission" type="string" required\>
+
+      `servermanager.region.info`
+
+    \</ParamField\>
+
+  \</Accordion\>
+
+  \<Accordion title="/region flag" icon="flag"\>
+
+    Set a region flag.
+
+    
+
+    \`\`\`bash
+
+    /region flag \<name\> \<flag\> \<value\>
+
+    \`\`\`
+
+    
+
+    \<ParamField path="name" type="string" required\>
+
+      The region name
+
+    \</ParamField\>
+
+    
+
+    \<ParamField path="flag" type="string" required\>
+
+      The flag name (e.g., `pvp`, `build`, `interact`)
+
+    \</ParamField\>
+
+    
+
+    \<ParamField path="value" type="string" required\>
+
+      The flag value `truefalse` or `allowdeny`)
+
+    \</ParamField\>
+
+    
+
+    \<ParamField path="permission" type="string" required\>
+
+      `servermanager.region.flag`
+
+    \</ParamField\>
+
+  \</Accordion\>
+
+  \<Accordion title="/region addplayer" icon="user-plus"\>
+
+    Add a player to a region.
+
+    
+
+    \`\`\`bash
+
+    /region addplayer \<region\> \<player\>
+
+    \`\`\`
+
+    
+
+    \<ParamField path="region" type="string" required\>
+
+      The region name
+
+    \</ParamField\>
+
+    
+
+    \<ParamField path="player" type="string" required\>
+
+      The player to add
+
+    \</ParamField\>
+
+    
+
+    \<ParamField path="permission" type="string" required\>
+
+      `servermanager.region.addplayer`
+
+    \</ParamField\>
+
+  \</Accordion\>
+
+  \<Accordion title="/region removeplayer" icon="user-minus"\>
+
+    Remove a player from a region.
+
+    
+
+    \`\`\`bash
+
+    /region removeplayer \<region\> \<player\>
+
+    \`\`\`
+
+    
+
+    \<ParamField path="region" type="string" required\>
+
+      The region name
+
+    \</ParamField\>
+
+    
+
+    \<ParamField path="player" type="string" required\>
+
+      The player to remove
+
+    \</ParamField\>
+
+    
+
+    \<ParamField path="permission" type="string" required\>
+
+      `servermanager.region.removeplayer`
+
+    \</ParamField\>
+
+  \</Accordion\>
+
+\</AccordionGroup\>
+
+## Player Commands
+
+Commands available to all players (no permission required).
+
+\<AccordionGroup\>
+
+  \<Accordion title="/playtime" icon="hourglass"\>
+
+    View playtime statistics.
+
+    
+
+    \`\`\`bash
+
+    /playtime [player]
+
+    /pt [player]
+
+    \`\`\`
+
+    
+
+    \<ParamField path="player" type="string"\>
+
+      Player to check. If empty, shows your own playtime.
+
+    \</ParamField\>
+
+  \</Accordion\>
+
+  \<Accordion title="/seen" icon="eye"\>
+
+    Check when a player was last online.
+
+    
+
+    \`\`\`bash
+
+    /seen \<player\>
+
+    \`\`\`
+
+    
+
+    \<ParamField path="player" type="string" required\>
+
+      The player to check
+
+    \</ParamField\>
+
+  \</Accordion\>
+
+  \<Accordion title="/online" icon="users"\>
+
+    Show online players across all servers.
+
+    
+
+    \`\`\`bash
+
+    /online
+
+    \`\`\`
+
+  \</Accordion\>
+
+\</AccordionGroup\>
+
+## Dynamic Server Commands
+
+Server transfer commands are dynamically registered based on your `network.json` configuration.
+
+\<Info\>
+
+  Each server defined in your network config with a `command` field will have a transfer command registered.
+
+  For example, if you have a server with `"command": "hub"`, players can use `/hub` to transfer.
+
+\</Info\>
+
+**Permission format:** `servermanager.server.<command>`
+
+**Example:** `/hub` requires `servermanager.server.hub`
+
+## Permission Reference
+
+\<Tabs\>
+
+  \<Tab title="Admin"\>
+
+    | Permission | Description |
+
+    |------------|-------------|
+
+    | `servermanager.admin.*` | All admin permissions |
+
+    | `servermanager.admin.reload` | Reload configs |
+
+    | `servermanager.admin.bypass` | Toggle protection bypass |
+
+    | `servermanager.admin.groups` | View groups |
+
+    | `servermanager.admin.group` | Manage player groups |
+
+    | `servermanager.admin.player` | View player info |
+
+    | `servermanager.admin.worlds` | View protected worlds |
+
+    | `servermanager.admin.stats` | View server stats |
+
+    | `servermanager.admin.servers` | View network servers |
+
+    | `servermanager.admin.network` | View network status |
+
+    | `servermanager.admin.genauth` | Generate auth files |
+
+    | `servermanager.admin.conflicts` | View conflict log |
+
+    | `servermanager.admin.profiles` | View protection profiles |
+
+    | `servermanager.admin.tp` | Cross-server teleport |
+
+    | `servermanager.admin.broadcast` | Broadcast messages |
+
+    | `servermanager.admin.maintenance` | Toggle maintenance |
+
+    | `servermanager.admin.send` | Send players to servers |
+
+    | `servermanager.admin.find` | Find players on network |
+
+  \</Tab\>
+
+  \<Tab title="Moderation"\>
+
+    | Permission | Description |
+
+    |------------|-------------|
+
+    | `servermanager.mod.*` | All moderation permissions |
+
+    | `servermanager.mod.ban` | Ban players |
+
+    | `servermanager.mod.unban` | Unban players |
+
+    | `servermanager.mod.kick` | Kick players |
+
+    | `servermanager.mod.mute` | Mute players |
+
+    | `servermanager.mod.unmute` | Unmute players |
+
+    | `servermanager.mod.history` | View punishment history |
+
+    | `servermanager.mod.check` | Check player status |
+
+    | `servermanager.mod.alts` | Check alt accounts |
+
+    | `servermanager.mod.silent` | Execute silent punishments |
+
+  \</Tab\>
+
+  \<Tab title="Staff"\>
+
+    | Permission | Description |
+
+    |------------|-------------|
+
+    | `servermanager.staff.*` | All staff permissions |
+
+    | `servermanager.staff.chat` | Use staff chat |
+
+    | `servermanager.staff.find` | Find players on network |
+
+  \</Tab\>
+
+  \<Tab title="Region"\>
+
+    | Permission | Description |
+
+    |------------|-------------|
+
+    | `servermanager.region.*` | All region permissions |
+
+    | `servermanager.region.create` | Create regions |
+
+    | `servermanager.region.delete` | Delete regions |
+
+    | `servermanager.region.list` | List regions |
+
+    | `servermanager.region.info` | View region info |
+
+    | `servermanager.region.flag` | Modify region flags |
+
+    | `servermanager.region.addplayer` | Add players to regions |
+
+    | `servermanager.region.removeplayer` | Remove players from regions |
+
+  \</Tab\>
+
+  \<Tab title="Bypass"\>
+
+    | Permission | Description |
+
+    |------------|-------------|
+
+    | `servermanager.bypass.worldprotection` | Bypass world protection |
+
+  \</Tab\>
+
+  \<Tab title="Special"\>
+
+    | Permission | Description |
+
+    |------------|-------------|
+
+    | `OP` | Full operator access |
+
+    | `*` | All permissions (wildcard) |
+
+  \</Tab\>
+
+\</Tabs\>

@@ -3,9 +3,9 @@
   "theme": "mint",
   "name": "Elygate - Hytale Documentation",
   "colors": {
-    "primary": "#6715a3",
-    "light": "#7a06c9",
-    "dark": "#5d1480"
+    "primary": "#9c2cec",
+    "light": "#9705f9",
+    "dark": "#792d9b"
   },
   "favicon": "/favicon.svg",
   "navigation": {
@@ -45,6 +45,7 @@
           {
             "group": "Overview",
             "pages": [
+              "comands",
               "Instruction"
             ]
           }
