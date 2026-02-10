@@ -14,7 +14,10 @@
         "tab": "Plugin Documentation",
         "products": [
           {
-            "product": "PartyPro"
+            "product": "PartyPro",
+            "pages": [
+              "documentation"
+            ]
           }
         ]
       },
@@ -26,12 +29,6 @@
           "guild-pro",
           "party-pro"
         ]
-      },
-      {
-        "tab": "test"
-      },
-      {
-        "tab": "test2"
       }
     ]
   },
