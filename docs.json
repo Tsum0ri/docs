@@ -14,6 +14,12 @@
         "tab": "Plugin Documentation",
         "products": [
           {
+            "product": "ServerManagerPro",
+            "pages": [
+              "documentation-1"
+            ]
+          },
+          {
             "product": "PartyPro",
             "pages": [
               "documentation"
