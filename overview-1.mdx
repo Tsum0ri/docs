@@ -25,7 +25,7 @@ ServerManagerPro enables multiple Hytale servers to work together as a network w
 ### Architecture Overview
 
 ```
-┌─────────────────────────────────────────────────────────────┐
+┌──────────────────────────────────────┐
 │                      MASTER SERVER                          │
 │  - Central database (SQLite)                                │
 │  - Group/Permission management                              │
@@ -34,14 +34,14 @@ ServerManagerPro enables multiple Hytale servers to work together as a network w
 │  - World protection                                         │
 │  - Registers transfer commands (e.g., /survival, /hub)      │
 │  - Monitors slave server status                             │
-└─────────────────────────────────────────────────────────────┘
+└──────────────────────────────────────┘
                               │
                     Port 25580 (TCP)
                               │
-        ┌─────────────────────┼─────────────────────┐
-        │                     │                     │
-        ▼                     ▼                     ▼
-┌───────────────┐     ┌───────────────┐     ┌───────────────┐
+        ┌─────────────┼───────────────┐
+        │                     │                       │
+        ▼                    ▼                     ▼
+┌─────────┐     ┌─────────┐     ┌─────────┐
 │  SLAVE 1      │     │  SLAVE 2      │     │  SLAVE 3      │
 │  (Survival)   │     │  (Creative)   │     │  (Minigames)  │
 │               │     │               │     │               │
@@ -49,7 +49,7 @@ ServerManagerPro enables multiple Hytale servers to work together as a network w
 │    mode       │     │    mode       │     │    mode       │
 │  - Syncs to   │     │  - Syncs to   │     │  - Syncs to   │
 │    master     │     │    master     │     │    master     │
-└───────────────┘     └───────────────┘     └───────────────┘
+└─────────┘     └─────────┘     └─────────┘
 ```
 
 ### Server Modes
