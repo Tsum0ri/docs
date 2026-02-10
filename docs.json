@@ -20,6 +20,7 @@
       },
       {
         "tab": "API reference",
+        "icon": "network-wired",
         "pages": [
           "server-manager-pro",
           "guild-pro",
