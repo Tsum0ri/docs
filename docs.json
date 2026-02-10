@@ -11,16 +11,25 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Plugin Documentation",
-        "products": [
+        "tab": "API reference",
+        "icon": "network-wired",
+        "pages": [
+          "server-manager-pro",
+          "guild-pro",
+          "party-pro"
+        ]
+      },
+      {
+        "tab": "PartyPro",
+        "groups": [
           {
-            "product": "ServerManagerPro",
+            "group": "Overview",
             "pages": [
-              "documentation-1"
+              "overview"
             ]
           },
           {
-            "product": "PartyPro",
+            "group": "Documentation",
             "pages": [
               "documentation"
             ]
@@ -28,12 +37,17 @@
         ]
       },
       {
-        "tab": "API reference",
-        "icon": "network-wired",
-        "pages": [
-          "server-manager-pro",
-          "guild-pro",
-          "party-pro"
+        "tab": "GuildPro"
+      },
+      {
+        "tab": "ServerManagerPro",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "overview-1"
+            ]
+          }
         ]
       }
     ]

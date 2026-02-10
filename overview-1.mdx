@@ -1,0 +1,505 @@
+---
+title: "Overview"
+---
+
+````
+ServerManagerPro is a comprehensive server management mod for Hytale that provides multi-server networking, player data synchronization, permission management, world protection, and more.
+
+## Table of Contents
+
+1. [Multi-Server Network System](#1-multi-server-network-system)
+2. [Inventory Synchronization](#2-inventory-synchronization)
+3. [Group & Permission System](#3-group--permission-system)
+4. [World Protection System](#4-world-protection-system)
+5. [Player Database](#5-player-database)
+6. [Commands](#6-commands)
+7. [Configuration Files](#7-configuration-files)
+8. [Setup Guide](#8-setup-guide)
+
+---
+
+## 1. Multi-Server Network System
+
+ServerManagerPro enables multiple Hytale servers to work together as a network with a Master/Slave architecture.
+
+### Architecture Overview
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      MASTER SERVER                          │
+│  - Central database (SQLite)                                │
+│  - Group/Permission management                              │
+│  - Inventory storage                                        │
+│  - Player data tracking                                     │
+│  - World protection                                         │
+│  - Registers transfer commands (e.g., /survival, /hub)      │
+│  - Monitors slave server status                             │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                    Port 25580 (TCP)
+                              │
+        ┌─────────────────────┼─────────────────────┐
+        │                     │                     │
+        ▼                     ▼                     ▼
+┌───────────────┐     ┌───────────────┐     ┌───────────────┐
+│  SLAVE 1      │     │  SLAVE 2      │     │  SLAVE 3      │
+│  (Survival)   │     │  (Creative)   │     │  (Minigames)  │
+│               │     │               │     │               │
+│  - Minimal    │     │  - Minimal    │     │  - Minimal    │
+│    mode       │     │    mode       │     │    mode       │
+│  - Syncs to   │     │  - Syncs to   │     │  - Syncs to   │
+│    master     │     │    master     │     │    master     │
+└───────────────┘     └───────────────┘     └───────────────┘
+```
+
+### Server Modes
+
+| Mode | Description |
+|------|-------------|
+| **Master** | Full features: database, groups, protection, network hub |
+| **Slave** | Minimal mode: only network features, syncs to master |
+| **Standalone** | Single server, no network features |
+
+### Authentication System
+
+Each slave server requires a unique authentication key to connect to the master. This ensures only authorized servers can join the network.
+
+**Auth Key Generation:**
+1. Define servers in master's `network.json`
+2. Use `/sm genauth <servername>` to generate auth file
+3. Copy generated file to slave server
+4. Rename to `slave-auth.json`
+5. Edit `masterHost` to master's IP address
+
+### Transfer Commands
+
+When running as master, transfer commands are automatically registered for each configured server:
+
+- `/hub` - Transfer to Hub server
+- `/survival` - Transfer to Survival server
+- `/creative` - Transfer to Creative server
+- etc.
+
+Transfer features:
+- Countdown timer with title/subtitle display
+- Permission-based access (`servermanager.server.<command>`)
+- Inventory saved before transfer
+- Smooth player handoff
+
+### Network Communication
+
+The master and slaves communicate via TCP on port 25580 (configurable). Message types include:
+
+| Message Type | Direction | Purpose |
+|--------------|-----------|---------|
+| AUTH | Slave → Master | Authenticate with auth key |
+| AUTH_RESPONSE | Master → Slave | Confirm/deny authentication |
+| HEARTBEAT | Slave → Master | Status update (players, TPS, uptime) |
+| PLAYER_JOIN | Slave → Master | Player joined slave server |
+| PLAYER_LEAVE | Slave → Master | Player left slave server |
+| GROUP_REQUEST | Slave → Master | Request player's group data |
+| GROUP_RESPONSE | Master → Slave | Send group/permissions |
+| GROUP_UPDATE | Master → Slaves | Broadcast group change |
+| INVENTORY_SAVE | Slave → Master | Save player inventory |
+| INVENTORY_LOAD | Slave → Master | Request player inventory |
+| INVENTORY_RESPONSE | Master → Slave | Send inventory data |
+
+---
+
+## 2. Inventory Synchronization
+
+Players have the same inventory across all servers in the network.
+
+### How It Works
+
+**On Master Server:**
+- Inventories stored in SQLite database (`player_inventories` table)
+- Loaded when player joins
+- Saved on inventory change (debounced 2s)
+- Batch save every 10 seconds
+- Immediate save on disconnect
+
+**On Slave Servers:**
+- Request inventory from master on join
+- Send inventory changes to master
+- Same debouncing/batching for performance
+
+### Performance Optimizations
+
+- **Async Database Operations**: All DB reads/writes happen on background threads
+- **Debouncing**: Changes within 2 seconds are batched together
+- **Batch Saves**: Dirty inventories saved every 10 seconds
+- **JSON Serialization**: Efficient inventory format
+
+### Inventory Flow
+
+```
+Player joins Slave → Request inventory from Master
+                          ↓
+                   Master loads from DB
+                          ↓
+                   Send to Slave
+                          ↓
+                   Apply to player
+
+Player changes inventory on Slave
+                          ↓
+                   Mark as dirty
+                          ↓
+                   Debounce (2s)
+                          ↓
+                   Send to Master
+                          ↓
+                   Master saves to DB
+```
+
+---
+
+## 3. Group & Permission System
+
+A full-featured permission system with groups, inheritance, and player-specific permissions.
+
+### Group Features
+
+- **Priority System**: Higher priority groups override lower ones
+- **Inheritance**: Groups can inherit from other groups
+- **Prefix/Suffix**: Display formatting for chat
+- **Colors**: Hex color support for prefix and name
+- **Wildcard Permissions**: Support for `*` and `permission.*`
+
+### Default Groups
+
+| Group | Priority | Prefix | Permissions |
+|-------|----------|--------|-------------|
+| default | 0 | (none) | servermanager.basic |
+| vip | 10 | [VIP] | servermanager.vip |
+| moderator | 50 | [Mod] | servermanager.mod, kick, mute |
+| admin | 100 | [Admin] | servermanager.admin, ban, bypass.* |
+
+### Permission Checks
+
+```
+1. Check player-specific permissions
+2. Check for negated permissions (-permission)
+3. Check wildcard permissions (permission.*)
+4. Check group permissions (with inheritance)
+```
+
+### Group Sync (Network)
+
+When a player's group changes on the master:
+1. Master broadcasts `GROUP_UPDATE` to all slaves
+2. Slaves request full group data
+3. Permissions cached locally on slaves
+
+---
+
+## 4. World Protection System
+
+Per-world protection settings with granular control over player actions.
+
+### Protection Settings
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| isProtected | true | Enable protection for this world |
+| blockPlace | false | Allow block placement |
+| blockBreak | false | Allow block breaking |
+| chestInteract | false | Allow chest access |
+| doorInteract | true | Allow door/gate use |
+| portalInteract | true | Allow portal use |
+| workbenchInteract | true | Allow crafting table use |
+| furnaceInteract | true | Allow furnace use |
+| buttonInteract | true | Allow button use |
+| leverInteract | true | Allow lever use |
+| bedInteract | true | Allow bed use |
+| signInteract | true | Allow sign interaction |
+| ... | ... | Many more interaction types |
+
+### Block Lists
+
+- **allowedBlocks**: Blocks that can always be broken (even if blockBreak=false)
+- **blockedBlocks**: Blocks that can never be placed (even if blockPlace=true)
+
+### Bypass System
+
+Players can bypass protection via:
+1. Manual bypass toggle (`/sm bypass`)
+2. Group permission (`servermanager.bypass.worldprotection`)
+3. World-specific bypass permission
+
+---
+
+## 5. Player Database
+
+SQLite database storing all player data.
+
+### Database File
+
+`ServerManagerPro/players.db`
+
+### Tables
+
+**players**
+| Column | Type | Description |
+|--------|------|-------------|
+| uuid | TEXT | Player UUID (primary key) |
+| name | TEXT | Player name |
+| first_join | INTEGER | First join timestamp |
+| last_join | INTEGER | Last join timestamp |
+| last_quit | INTEGER | Last quit timestamp |
+| playtime_seconds | INTEGER | Total playtime |
+| ip_address | TEXT | Last IP address |
+| times_joined | INTEGER | Join count |
+| primary_group | TEXT | Primary group name |
+
+**player_groups**
+| Column | Type | Description |
+|--------|------|-------------|
+| uuid | TEXT | Player UUID |
+| group_name | TEXT | Group name |
+
+**player_permissions**
+| Column | Type | Description |
+|--------|------|-------------|
+| uuid | TEXT | Player UUID |
+| permission | TEXT | Permission node |
+
+**player_inventories**
+| Column | Type | Description |
+|--------|------|-------------|
+| uuid | TEXT | Player UUID (primary key) |
+| inventory_json | TEXT | Serialized inventory |
+| last_server | TEXT | Last server that saved |
+| updated_at | INTEGER | Last update timestamp |
+
+---
+
+## 6. Commands
+
+All commands use the `/sm` prefix (alias: `/servermanager`).
+
+### Command List
+
+| Command | Permission | Description |
+|---------|------------|-------------|
+| `/sm` | - | Show help |
+| `/sm reload` | servermanager.admin.reload | Reload all configs |
+| `/sm bypass` | servermanager.admin.bypass | Toggle protection bypass |
+| `/sm groups` | servermanager.admin.groups | List all groups |
+| `/sm group <player> [group]` | servermanager.admin.group | View/set player group |
+| `/sm player <name>` | servermanager.admin.player | View player info |
+| `/sm worlds` | servermanager.admin.worlds | List protected worlds |
+| `/sm stats` | servermanager.admin.stats | View server statistics |
+| `/sm servers` | servermanager.admin.servers | List configured servers |
+| `/sm network` | servermanager.admin.network | View network status |
+| `/sm genauth <server>` | servermanager.admin.genauth | Generate slave auth file |
+| `/sm debug` | OP | Debug current world protection |
+
+### Transfer Commands (Master Only)
+
+Automatically registered based on `network.json` configuration:
+- `/<command>` - Transfer to specified server
+
+---
+
+## 7. Configuration Files
+
+All configuration files are stored in `ServerManagerPro/` folder.
+
+### network.json (Master Mode)
+
+```json
+{
+  "mode": "master",
+  "master": {
+    "enabled": true,
+    "port": 25580,
+    "transferTitle": "Transferring to {server}",
+    "transferSubtitle": "in {countdown} seconds...",
+    "defaultCountdown": 3,
+    "heartbeatIntervalSeconds": 10,
+    "timeoutSeconds": 30,
+    "servers": [
+      {
+        "id": "abc12345",
+        "name": "Hub",
+        "authKey": "generated-auth-key-here",
+        "host": "10.0.1.10",
+        "gamePort": 5520,
+        "description": "Transfer to Hub",
+        "command": "hub",
+        "permission": "servermanager.server.hub",
+        "countdown": 3,
+        "allowTransfer": true
+      },
+      {
+        "id": "def67890",
+        "name": "Survival",
+        "authKey": "another-auth-key-here",
+        "host": "10.0.1.11",
+        "gamePort": 5521,
+        "description": "Transfer to Survival",
+        "command": "survival",
+        "permission": "servermanager.server.survival",
+        "countdown": 3,
+        "allowTransfer": true
+      }
+    ]
+  },
+  "slave": {
+    "masterHost": "10.0.1.10",
+    "masterPort": 25580,
+    "authKey": "",
+    "serverName": "MyServer",
+    "heartbeatIntervalSeconds": 5
+  }
+}
+```
+
+### slave-auth.json (Slave Mode)
+
+Generated by `/sm genauth <servername>` on master, then copied to slave:
+
+```json
+{
+  "masterHost": "10.0.1.10",
+  "masterPort": 25580,
+  "authKey": "abc123def456...",
+  "serverName": "Survival",
+  "heartbeatIntervalSeconds": 5,
+  "reconnectDelaySeconds": 10
+}
+```
+
+**Important**: When `slave-auth.json` exists, the server runs in **SLAVE-ONLY MODE** (minimal features, network only).
+
+### groups.json
+
+```json
+{
+  "default": {
+    "name": "default",
+    "default": true,
+    "priority": 0,
+    "prefix": "",
+    "prefixColor": "#ffffff",
+    "nameColor": "#aaaaaa",
+    "suffix": "",
+    "permissions": ["servermanager.basic"],
+    "inheritedGroups": []
+  },
+  "admin": {
+    "name": "admin",
+    "default": false,
+    "priority": 100,
+    "prefix": "[Admin] ",
+    "prefixColor": "#ff5555",
+    "nameColor": "#ff5555",
+    "suffix": "",
+    "permissions": [
+      "servermanager.admin",
+      "servermanager.bypass.*"
+    ],
+    "inheritedGroups": ["moderator"]
+  }
+}
+```
+
+### world-protection.json
+
+```json
+{
+  "worlds": {
+    "Overworld": {
+      "isProtected": true,
+      "blockPlace": false,
+      "blockBreak": false,
+      "chestInteract": false,
+      "doorInteract": true,
+      "portalInteract": true,
+      "workbenchInteract": true,
+      "furnaceInteract": true,
+      "anvilInteract": true,
+      "enchantInteract": true,
+      "brewingInteract": true,
+      "buttonInteract": true,
+      "leverInteract": true,
+      "pressurePlateInteract": true,
+      "bedInteract": true,
+      "signInteract": true,
+      "chairInteract": true,
+      "lampInteract": true,
+      "barrelInteract": false,
+      "shulkerInteract": false,
+      "loomInteract": true,
+      "stonecutterInteract": true,
+      "grindstoneInteract": true,
+      "cartographyInteract": true,
+      "smithingInteract": true,
+      "lecternInteract": true,
+      "otherInteract": false,
+      "bypassPermission": "servermanager.bypass.overworld",
+      "allowedBlocks": [],
+      "blockedBlocks": []
+    }
+  }
+}
+```
+
+---
+
+## 8. Setup Guide
+
+### Single Server (Standalone)
+
+1. Install ServerManagerPro mod
+2. Start server - default configs created
+3. Edit `groups.json` and `world-protection.json` as needed
+4. Use `/sm reload` to apply changes
+
+### Multi-Server Network
+
+#### Master Server Setup
+
+1. Install ServerManagerPro mod
+2. Edit `network.json`:
+   ```json
+   {
+     "mode": "master",
+     "master": {
+       "enabled": true,
+       "port": 25580,
+       "servers": [
+         {
+           "name": "Survival",
+           "host": "SLAVE_IP",
+           "gamePort": 5521,
+           "command": "survival"
+         }
+       ]
+     }
+   }
+   ```
+3. Start master server
+4. Run `/sm genauth Survival` to generate auth file
+5. Copy `generated-auth/slave-auth-survival.json` to slave server
+
+#### Slave Server Setup
+
+1. Install ServerManagerPro mod
+2. Copy auth file from master to `ServerManagerPro/slave-auth.json`
+3. Edit `slave-auth.json`:
+   ```json
+   {
+     "masterHost": "MASTER_IP_HERE",
+     "masterPort": 25580,
+     "authKey": "...",
+     "serverName": "Survival"
+   }
+   ```
+4. Start slave server
+5. Verify connection in master logs
+
+### Firewall Configuration
+````
